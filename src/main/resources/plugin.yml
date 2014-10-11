@@ -1,0 +1,10 @@
+name: ApiTest
+main: com.minecats.cindyk.apitest.ApiTest
+version: 1.0
+authors: [cindy_k]
+description: Lets test all Api things
+
+commands:
+  apitest:
+    description: Test plugin via commands.
+    aliases: api
