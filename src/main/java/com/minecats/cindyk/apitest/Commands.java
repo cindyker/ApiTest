@@ -85,6 +85,14 @@ public class Commands implements CommandExecutor {
 
                 break;
 
+                case "list":
+                    commandSender.sendMessage("=== Events you are listening for ===");
+                    for(Class event: ApiTest.listenedTo)
+                    {
+                        commandSender.sendMessage("==> "+event.getName());
+                    }
+                    break;
+
             }
         }
 
