@@ -1,19 +1,17 @@
 package com.minecats.cindyk.apitest;
 
 
-import com.minecats.cindyk.apitest.EventsPlayer.PlayerLoginEventHandler;
-import com.minecats.cindyk.apitest.EventsPlayer.PlayerJoinEventHandler;
+import com.minecats.cindyk.apitest.Events.DummyListener;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Cindy on 10/8/2014.
@@ -21,7 +19,7 @@ import java.util.List;
 public class Commands implements CommandExecutor {
 
     ApiTest plugin;
-    PlayerLoginEventHandler pleh;
+    DummyListener dummyListener;
 
     static HashMap handlers;
 
@@ -29,6 +27,7 @@ public class Commands implements CommandExecutor {
     {
        this.plugin = plugin;
        handlers = new HashMap<String,Object>();
+        dummyListener = new DummyListener();
     }
 
     @Override
@@ -49,30 +48,18 @@ public class Commands implements CommandExecutor {
                     if(strings.length> 1)
                     {
                         ApiTest.log.info("ApiTest: Adding " + strings[1] + " to be tracked");
-                        // getServer().getPluginManager().registerEvents( this, this );
-                        String strClass = "com.minecats.cindyk.apitest.EventsPlayer."+strings[1]+"Handler";
+
                         try {
-                            Class c = Class.forName(strClass);
-                            Object o = c.newInstance();
-                            ApiTest.log.info("Object Type: " + o.getClass().getName());
-                            plugin.getServer().getPluginManager().registerEvents((Listener)o , plugin);
-                            handlers.put(strClass,o);
+
+                            Class cl = Class.forName("org.bukkit.event."+strings[1]);
+                            plugin.getServer().getPluginManager().registerEvent(cl, dummyListener, EventPriority.HIGH,dummyListener,plugin);
+                            commandSender.sendMessage("Registered "+ cl.getName() + " for listening.");
+                            ApiTest.listenedTo.add(cl);
                         }
                         catch (ClassNotFoundException ex)
                         {
-                            ApiTest.log.info("Class not found : " + strClass);
+                            ApiTest.log.info("Class not found : " + strings[1]);
                         }
-                        catch(InstantiationException ex)
-                        {
-                            ApiTest.log.info("Couldn't instantiate : " + strClass);
-                            ex.printStackTrace();
-                        }
-                        catch(IllegalAccessException ex)
-                        {
-                            ApiTest.log.info("Illegal Access Exception : " + strClass);
-                            ex.printStackTrace();
-                        }
-
 
                     }
                 }
@@ -80,11 +67,20 @@ public class Commands implements CommandExecutor {
 
                 case "remove":
                     ApiTest.log.info("ApiTest: Removing " + strings[1] + " to be tracked");
-                    // getServer().getPluginManager().registerEvents( this, this );
-                    String strClass = strings[1]+"Handler";
-                    Object o = handlers.get(strClass);
-                    HandlerList.unregisterAll((Listener)o);
-                    handlers.remove(strClass);
+                    try {
+                        Class cl = Class.forName("org.bukkit.event." + strings[1]);
+                        if(ApiTest.listenedTo.contains(cl)) {
+                            ApiTest.listenedTo.remove(cl);
+                            commandSender.sendMessage(strings[1]+" will no longer be logged. (Its still going to fire. Blame Bukkit.)");
+                        }
+                        else
+                            commandSender.sendMessage(strings[1]+" is not being logged right now.");
+
+                    }
+                    catch (ClassNotFoundException ex)
+                    {
+                        ApiTest.log.info("Class not found : " + strings[1]);
+                    }
 
 
                 break;
