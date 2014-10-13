@@ -5,15 +5,19 @@ import com.minecats.cindyk.apitest.ApiTest;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.EventExecutor;
 
@@ -60,54 +64,46 @@ public class DummyListener implements Listener, EventExecutor {
                         break;
                     case "Player":
                         Player p = (Player)ff.get(event);
-                        fieldInfo +=  " Player: " + p.getName();
+                        fieldInfo +=  " Player: " + ((p==null)?"null":p.getName());
                         break;
-                    case "BlockFace":
-                        BlockFace b = (BlockFace)ff.get(event);
-                        fieldInfo += " BlockFace: " + b.name();
-                        break;
-                    case "Block":
-                        Block bl = (Block)ff.get(event);
-                        fieldInfo += " Block: " + bl.getType().name();
-                        break;
-                    case "Action":
-                        Action a = (Action) ff.get(event);
-                        fieldInfo += " Action: " + a.name();
-                        break;
-                    case "Entity":
-                        Entity ent = (Entity) ff.get(event);
-                        fieldInfo += " Entity: " + ent.getType().name();
-                    break;
                     case "Item":
                         Item ii = (Item) ff.get(event);
-                        fieldInfo += " Item: " + ii.getItemStack().getType().name() + " Qty: " + ii.getItemStack().getAmount();
+                        fieldInfo += " Item: " + ((ii==null)?"null":(ii.getItemStack().getType().name() + " Qty: " + ii.getItemStack().getAmount()));
                         break;
                     case "ItemStack":
                         ItemStack is = (ItemStack) ff.get(event);
                         fieldInfo +=  " ItemStack: " + ((is == null)?"null":(is.getType().name() + " Qty: " + is.getAmount()));
                         break;
-                    case "Material":
-                        Material mm = (Material) ff.get(event);
-                        fieldInfo +=  " Material: " + ((mm == null) ? "null" : mm.name());
-                        break;
                     case "List":
                         List ll = (List)ff.get(event);
-                        if(ll.size()>0)
-                            fieldInfo += " List size: " + ll.size() + " of type: " + ll.get(0).getClass().getSimpleName();
-                        else
-                           fieldInfo +=  " List size: " + ll.size();
-                     break;
-                    case "Statistic":
-                        Statistic ss= (Statistic)ff.get(event);
-                        fieldInfo += " Statistic: " + ((ss==null)?"null":ss.name());
+                        fieldInfo += " List size: " + ll.size() + " of type: " +((ll.size()>0)? ll.get(0).getClass().getSimpleName():" Empty List");
                         break;
                     case "Location":
                         Location loc = (Location)ff.get(event);
                         fieldInfo += " Location: " +((loc==null)?"null":loc.toString());
                         break;
+                    case "Block":
+                        Block bloc = (Block)ff.get(event);
+                        fieldInfo += " Block: " +((bloc==null)?"null":bloc.getType().name());
+                        break;
+                    case "World":
+                        World w = (World)ff.get(event);
+                        fieldInfo += " World: " +((w==null)?"null":w.getName());
+                        break;
                     default: {
-                        // ApiTest.log.info("Class not supported " + ff.getType().getName());
-                        fieldInfo += "Class not supported - "+ff.getType().getSimpleName();
+                        try { //name is common.. lets do that if we can.
+                            Object o1 = ff.get(event);
+                            Method methodName;
+                            methodName = o1.getClass().getMethod("name", null);
+                            fieldInfo += " " + ff.getType().getSimpleName()+".name : " + methodName.invoke(o1);
+                        }
+                        catch(NoSuchMethodException ex) {
+                            fieldInfo += "Class not supported - " + ff.getType().getSimpleName();
+                        }
+                        catch(InvocationTargetException ex)
+                        {
+                            fieldInfo += "Class not supported - " + ff.getType().getSimpleName() + " (ite)";
+                        }
                     }
                 }
             }
@@ -117,7 +113,7 @@ public class DummyListener implements Listener, EventExecutor {
                 ex.printStackTrace();
             }
 
-            ApiTest.log.info("Field: " + fieldInfo);
+            ApiTest.log.info("Field  : " + fieldInfo);
 
         }
 
@@ -127,10 +123,7 @@ public class DummyListener implements Listener, EventExecutor {
             String mname = m.getName();
 
             Type[] pType = m.getGenericParameterTypes();
-           /* if ((pType.length != 1)
-                    || Locale.class.isAssignableFrom(pType[0].getClass())) {
-                continue;
-            }*/
+
             if(m.getParameterTypes().length>0)
                 ApiTest.log.info("Method : " + mname + " - return type - " + m.getReturnType().getSimpleName() + " has params.");
             else
@@ -147,42 +140,36 @@ public class DummyListener implements Listener, EventExecutor {
                             break;
                         case "int":
                             int i = (int) m.invoke(event);
-                            ApiTest.log.info("Method : " + mname + " - returns int: " + m.getReturnType().getSimpleName());
-                            break;
-                        case "Entity":
-                            Entity mEnt = (Entity) m.invoke(event);
-                            ApiTest.log.info("Method : " + mname + " - returns Entity: " + ( (mEnt==null)? "null" : (mEnt.getType().name())));
+                            ApiTest.log.info("Method : " + mname + " - returns int: " + i);
                             break;
                         case "ItemStack":
                             ItemStack is = (ItemStack) m.invoke(event);
                             ApiTest.log.info("Method : " + mname + " - returns ItemStack: " + ((is==null) ? "null" : (is.getType().name() + " Qty: " + is.getAmount())));
                             break;
-                        case "Material":
-                            Material methmat = (Material) m.invoke(event);
-                            ApiTest.log.info("Method : " + mname + "- returns Material: " + ((methmat == null) ? "null" : methmat.name()));
-                            break;
-                        case "Action":
-                            Action methact = (Action) m.invoke(event);
-                            ApiTest.log.info("Method : " + mname + "- returns Action: " + methact.name());
-                            break;
-                        case "BlockFace":
-                            BlockFace methbf = (BlockFace) m.invoke(event);
-                            ApiTest.log.info("Method : " + mname + "- returns BlockFace: " + methbf.name());
-                            break;
-                        case "Result":
-                            Event.Result methResult = (Event.Result) m.invoke(event);
-                            ApiTest.log.info("Method : " + mname + "- returns Result: " + methResult.name() );
-                            break;
-                        case "Statistic":
-                            Statistic methStat = (Statistic) m.invoke((event));
-                            ApiTest.log.info("Method : " + mname + "- returns Statistic: " + ((methStat==null)?"null":methStat.name()));
-                            break;
                         case "Location":
                             Location methLoc = (Location) m.invoke(event);
-                            ApiTest.log.info("Method : " + mname + "- returns Location: " + ((methLoc==null)?"null":methLoc.toString()));
+                            ApiTest.log.info("Method : " + mname + " - returns Location: " + ((methLoc==null)?"null":methLoc.toString()));
+                            break;
+                        case "Block":
+                            Block methBlock = (Block)m.invoke(event);
+                            ApiTest.log.info("Method : " + mname + " - returns Block: " + ((methBlock==null)?"null":methBlock.getType().name()));
+                            break;
+                        case "World":
+                            World methWorld = (World)m.invoke(event);
+                            ApiTest.log.info("Method : " + mname + " - returns World: " + ((methWorld==null)?"null":methWorld.getName()));
                             break;
                         default:
-                            ApiTest.log.info("Method : " + mname + " - return type - " + m.getReturnType().getSimpleName());
+                           try { //name is common.. lets do that if we can.
+                               Object o = m.invoke(event);
+                               if(o!=null) {
+                                   Method methodName;
+                                   methodName = o.getClass().getMethod("name");
+                                   ApiTest.log.info("Method : " + mname + " : " + m.getReturnType().getSimpleName() + ".name : " + methodName.invoke(o));
+                               }
+                               else{ ApiTest.log.info("Method : " + mname + " - return type - " + m.getReturnType().getSimpleName());  }
+                           }
+                           catch(NoSuchMethodException ex)
+                           {  ApiTest.log.info("Method : " + mname + " - return type - " + m.getReturnType().getSimpleName());  }
 
                     }
                 } catch (InvocationTargetException ex) {
@@ -194,25 +181,6 @@ public class DummyListener implements Listener, EventExecutor {
                 }
             }
 
-//            if(m.getGenericReturnType().getClass().getSimpleName().equalsIgnoreCase("String"))
-//            {
-//                try {
-//                    String s =(String) m.invoke(event);
-//                    ApiTest.log.info("Method : " + mname + " - " + s);
-//                }
-//                catch(InvocationTargetException ex)
-//                {
-//                    ApiTest.log.info("InvocationTargetException on Event : " + event.getClass().getSimpleName());
-//                    ex.printStackTrace();
-//                }
-//                catch(IllegalAccessException ex) {
-//                    ApiTest.log.info("IllegalAccessException on Event : " + event.getClass().getSimpleName());
-//                    ex.printStackTrace();
-//                }
-//
-//            }
-//            else
-//                ApiTest.log.info("Method : " + mname + " - return type - " + m.getGenericReturnType().getClass().getName());
         }
     }
 
