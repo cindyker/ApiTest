@@ -83,8 +83,23 @@ public class DummyListener implements Listener, EventExecutor {
                         fieldInfo += " Location: " +((loc==null)?"null":loc.toString());
                         break;
                     case "Block":
-                        Block bloc = (Block)ff.get(event);
-                        fieldInfo += " Block: " +((bloc==null)?"null":bloc.getType().name());
+                    case "Entity":
+                        try { //getType fields...
+                            Object o1 = ff.get(event);
+                            if(o1!=null) {
+                                Method methodName;
+                                methodName = o1.getClass().getMethod("getType", null);
+                                fieldInfo += " " + ff.getType().getSimpleName() + ".getType : " + methodName.invoke(o1).toString();
+                            }
+                            else { fieldInfo += ff.getType().getSimpleName()+" : null";}
+                        }
+                        catch(NoSuchMethodException ex) {
+                            fieldInfo += " getType not flying - " + ff.getType().getSimpleName();
+                        }
+                        catch(InvocationTargetException ex)
+                        {
+                            fieldInfo += " getType not flying - " + ff.getType().getSimpleName() + " (ite)";
+                        }
                         break;
                     case "World":
                         World w = (World)ff.get(event);
@@ -93,16 +108,19 @@ public class DummyListener implements Listener, EventExecutor {
                     default: {
                         try { //name is common.. lets do that if we can.
                             Object o1 = ff.get(event);
-                            Method methodName;
-                            methodName = o1.getClass().getMethod("name", null);
-                            fieldInfo += " " + ff.getType().getSimpleName()+".name : " + methodName.invoke(o1);
+                            if(o1!=null) {
+                                Method methodName;
+                                methodName = o1.getClass().getMethod("name", null);
+                                fieldInfo += " " + ff.getType().getSimpleName() + ".name : " + methodName.invoke(o1);
+                            }
+                            else { fieldInfo += ff.getType().getSimpleName()+" : null";}
                         }
                         catch(NoSuchMethodException ex) {
-                            fieldInfo += "Class not supported - " + ff.getType().getSimpleName();
+                            fieldInfo += " Class not supported - " + ff.getType().getSimpleName();
                         }
                         catch(InvocationTargetException ex)
                         {
-                            fieldInfo += "Class not supported - " + ff.getType().getSimpleName() + " (ite)";
+                            fieldInfo += " Class not supported - " + ff.getType().getSimpleName() + " (ite)";
                         }
                     }
                 }
