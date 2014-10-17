@@ -2,10 +2,7 @@ package com.minecats.cindyk.apitest.Events;
 
 import com.google.common.collect.Lists;
 import com.minecats.cindyk.apitest.ApiTest;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Statistic;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -82,6 +79,12 @@ public class DummyListener implements Listener, EventExecutor {
                         Location loc = (Location)ff.get(event);
                         fieldInfo += " Location: " +((loc==null)?"null":loc.toString());
                         break;
+                    case "Chunk":
+                    {
+                        Chunk chk = (Chunk) ff.get(event);
+                        fieldInfo += " Chunk: " + ((chk==null)?"null":chk.toString()+" ,Num Entities: " + ((chk.getEntities()!=null)?chk.getEntities().length:"null")
+                                + " ,Loc: x"+((chk.getChunkSnapshot()==null)?"null":chk.getChunkSnapshot().getX()+" z"+chk.getChunkSnapshot().getZ()));
+                    }
                     case "Block":
                     case "Entity":
                         try { //getType fields...
