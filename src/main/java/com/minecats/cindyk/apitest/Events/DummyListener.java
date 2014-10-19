@@ -4,17 +4,15 @@ import com.google.common.collect.Lists;
 import com.minecats.cindyk.apitest.ApiTest;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
+
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.EventExecutor;
 
@@ -73,18 +71,24 @@ public class DummyListener implements Listener, EventExecutor {
                         break;
                     case "List":
                         List ll = (List)ff.get(event);
-                        fieldInfo += " List size: " + ll.size() + " of type: " +((ll.size()>0)? ll.get(0).getClass().getSimpleName():" Empty List");
+                        if(ll != null)
+                            fieldInfo += " List size: " + ll.size() + " of type: " +((ll.size()>0)? ll.get(0).getClass().getSimpleName():" Empty List");
+                        else
+                            fieldInfo += " List: null";
                         break;
                     case "Location":
                         Location loc = (Location)ff.get(event);
                         fieldInfo += " Location: " +((loc==null)?"null":loc.toString());
                         break;
+                    case "Vehicle":
+                        Vehicle vehc = (Vehicle)ff.get(event);
+                        fieldInfo += " Vehicle: " + ((vehc==null)?"null":vehc.getVehicle().toString());
+                        break;
                     case "Chunk":
-                    {
                         Chunk chk = (Chunk) ff.get(event);
                         fieldInfo += " Chunk: " + ((chk==null)?"null":chk.toString()+" ,Num Entities: " + ((chk.getEntities()!=null)?chk.getEntities().length:"null")
                                 + " ,Loc: x"+((chk.getChunkSnapshot()==null)?"null":chk.getChunkSnapshot().getX()+" z"+chk.getChunkSnapshot().getZ()));
-                    }
+                        break;
                     case "Block":
                     case "Entity":
                         try { //getType fields...
@@ -170,6 +174,10 @@ public class DummyListener implements Listener, EventExecutor {
                         case "Location":
                             Location methLoc = (Location) m.invoke(event);
                             ApiTest.log.info("Method : " + mname + " - returns Location: " + ((methLoc==null)?"null":methLoc.toString()));
+                            break;
+                        case "BlockState":
+                            BlockState bs = (BlockState)m.invoke(event);
+                            ApiTest.log.info("Method : " + mname + " - returns BlockState: " + ((bs==null)?"null":bs.getType().name()));
                             break;
                         case "Block":
                             Block methBlock = (Block)m.invoke(event);
