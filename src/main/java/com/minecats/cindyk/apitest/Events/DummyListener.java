@@ -82,7 +82,7 @@ public class DummyListener implements Listener, EventExecutor {
                         break;
                     case "Vehicle":
                         Vehicle vehc = (Vehicle)ff.get(event);
-                        fieldInfo += " Vehicle: " + ((vehc==null)?"null":vehc.getVehicle().toString());
+                        fieldInfo += " Vehicle: " + ((vehc==null)?"null":vehc.toString());
                         break;
                     case "Chunk":
                         Chunk chk = (Chunk) ff.get(event);
