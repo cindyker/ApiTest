@@ -1,35 +1,33 @@
 package com.minecats.cindyk.apitest.Events;
 
-import org.bukkit.event.Event;
+import com.minecats.cindyk.apitest.ApiTest;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Created by cindy on 10/26/2014.
  *
- * 11.13.2016 - I think I was adding a way to just blast everyone on the server with api-events.
- * but I never finished it... not sure I want it now.
+ * Hashmap for later use... I know its not being used now.
+ *
  */
 public class Listeners {
 
-    String EventName;
-    Event thisEvent;
-    ConcurrentHashMap<String,PlayersChoice> peeps = new ConcurrentHashMap<String,PlayersChoice>();
+    List<String> peeps = new ArrayList<>();
+    ApiTest plugin;
 
-    public Listeners(Event event)
+    public Listeners(ApiTest plugin)
     {
-        thisEvent = event;
-        EventName = thisEvent.getEventName();
+         this.plugin = plugin;
     }
 
     public boolean addPlayer(String playerName, boolean cancel)
     {
         if(!peeps.contains(playerName)) {
-            PlayersChoice pc = new PlayersChoice();
-            pc.Name = playerName;
-            pc.Cancel = cancel;
-            peeps.put(playerName,pc);
+            peeps.add(playerName);
             return true;
         }
 
@@ -46,15 +44,26 @@ public class Listeners {
         return false;
     }
 
-    public boolean setCancelled(String playerName, boolean cancel)
+ /*   public boolean setCancelled(String playerName, boolean cancel)
     {
         if(peeps.contains(playerName))
         {
             PlayersChoice pc = peeps.get(playerName);
             pc.Cancel = cancel;
-            peeps.put(playerName,pc);
+            peeps.put(playerName, pc);
         }
         return false;
+    }*/
+
+    public void sendPeepsMessage(String message){
+
+        for(String pc : peeps ){
+
+            Player p = plugin.getServer().getPlayer(pc);
+            if (p != null) {
+                p.sendMessage(ChatColor.GOLD+message);
+            }
+        }
     }
 
 }

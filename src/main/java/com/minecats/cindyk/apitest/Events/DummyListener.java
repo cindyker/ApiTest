@@ -38,6 +38,8 @@ public class DummyListener implements Listener, EventExecutor {
 
         ApiTest.log.info("-----------------------------------------------------");
         ApiTest.log.info("*** -> Event Called : " + event.getClass().getSimpleName());
+        ApiTest.listening.sendPeepsMessage("*** -> Event Called : " + event.getClass().getSimpleName());
+        ApiTest.listening.sendPeepsMessage("*** -> see log for details of the event...");
 
         Iterable<Field> flist = getFieldsUpTo(event.getClass(),null);
 

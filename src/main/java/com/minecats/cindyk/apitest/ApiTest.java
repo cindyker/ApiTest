@@ -16,7 +16,7 @@ public class ApiTest extends JavaPlugin {
     public static Logger log;
 
     public static Set<Class<? extends Event>> listenedTo = new HashSet<>();
-    public static Set<Listeners> listening  = new HashSet<>();
+    public static Listeners listening;
 
     @Override
     public void onEnable()
@@ -26,6 +26,8 @@ public class ApiTest extends JavaPlugin {
         log.info("Enabled");
 
         log.info("1. Enabled called - Passed");
+
+        listening  = new Listeners(this);
 
         getCommand("apitest").setExecutor(new Commands(this));
     }
