@@ -27,8 +27,6 @@ public class ApiTest extends JavaPlugin {
 
         log.info("1. Enabled called - Passed");
 
-        //Going to Add lots of Events, so lets call a function to do that
-        //May move it to its own class.
         getCommand("apitest").setExecutor(new Commands(this));
     }
 

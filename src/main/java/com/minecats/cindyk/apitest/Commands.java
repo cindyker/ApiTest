@@ -94,7 +94,22 @@ public class Commands implements CommandExecutor {
                     }
                     break;
 
+
+
             }
+        }
+        else{
+
+            commandSender.sendMessage("Welcome to ApiTest.");
+            commandSender.sendMessage("This is to test events. You will get informed when the events");
+            commandSender.sendMessage("that you add are fired with some of their data.");
+            commandSender.sendMessage("Example: apitest add player.PlayerAnimationEvent ");
+            commandSender.sendMessage("");
+            commandSender.sendMessage("There are only 3 sub-commands:");
+            commandSender.sendMessage("  add [Bukkit Class]");
+            commandSender.sendMessage("  remove [Bukkit Class]");
+            commandSender.sendMessage("  list ");
+
         }
 
 
