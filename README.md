@@ -13,14 +13,21 @@ I have mainly used this plugin to help test updated releases of Bukkit / Spigot.
 
 The Javadocs for Bukkit will help you get the event names needed: [JavaDocs](https://hub.spigotmc.org/javadocs/bukkit/)
 
+
 The plugin has one main command:
+
 /apitest
 
 The subcommands are:
+
    add eventname
+
    remove eventname
+
    list
+
    notify
+
    quiet
 
 Source
