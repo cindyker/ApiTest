@@ -32,7 +32,7 @@ The subcommands are:
 
 Source
 ------
-Source code is currently available on [GitHub].
+Source code is currently available on [GitHub](https://github.com/cindyker/ApiTest).
 
 Binaries
 --------
