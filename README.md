@@ -20,15 +20,15 @@ The plugin has one main command:
 
 The subcommands are:
 
-   add eventname
+   * add eventname
 
-   remove eventname
+   * remove eventname
 
-   list
+   * list
 
-   notify
+   * notify
 
-   quiet
+   * quiet
 
 Source
 ------
