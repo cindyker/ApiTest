@@ -1,6 +1,6 @@
 name: ApiTest
 main: com.minecats.cindyk.apitest.ApiTest
-version: 1.0
+version: 2.0
 authors: [cindy_k]
 description: Lets test all Api things
 

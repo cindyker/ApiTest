@@ -59,6 +59,7 @@ public class Commands implements CommandExecutor {
                         catch (ClassNotFoundException ex)
                         {
                             ApiTest.log.info("Class not found : " + strings[1]);
+                            ApiTest.log.info("Exception : " + ex.getMessage());
                         }
 
                     }
@@ -71,7 +72,7 @@ public class Commands implements CommandExecutor {
                         Class cl = Class.forName("org.bukkit.event." + strings[1]);
                         if(ApiTest.listenedTo.contains(cl)) {
                             ApiTest.listenedTo.remove(cl);
-                            commandSender.sendMessage(strings[1]+" will no longer be logged. (Its still going to fire. Blame Bukkit.)");
+                            commandSender.sendMessage(strings[1]+" will no longer be logged. (It's still going to fire.)");
                         }
                         else
                             commandSender.sendMessage(strings[1]+" is not being logged right now.");

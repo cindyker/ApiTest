@@ -1,5 +1,6 @@
 package com.minecats.cindyk.apitest;
 
+import com.minecats.cindyk.apitest.Events.Listeners;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.awt.*;
@@ -15,6 +16,7 @@ public class ApiTest extends JavaPlugin {
     public static Logger log;
 
     public static Set<Class<? extends Event>> listenedTo = new HashSet<>();
+    public static Set<Listeners> listening  = new HashSet<>();
 
     @Override
     public void onEnable()
